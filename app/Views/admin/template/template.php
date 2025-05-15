@@ -139,6 +139,9 @@
         <a href="/admin">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
+        <a href="/category">
+            <i class="bi bi-archive-fill"></i> category
+        </a>
         <a href="/meja">
             <i class="bi bi-table"></i> meja
         </a>

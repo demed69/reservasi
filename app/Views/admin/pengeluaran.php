@@ -1,72 +1,70 @@
 <?= $this->extend('admin/template/template'); ?>
-
 <?= $this->section('content'); ?>
 
 <div class="container mt-4">
     <h2>Pengeluaran</h2>
 
-    <P>Tambahkan pengeluaran</P>
+    <p>Tambahkan pengeluaran</p>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
         Tambah
     </button>
 
-
-    <table class="table table-striped">
+    <table class="table table-striped mt-3">
         <thead>
             <tr>
-                <th>pembelian barang</th>
-                <th>jumlah </th>
+                <th>Pembelian Barang</th>
+                <th>Jumlah</th>
                 <th>Harga</th>
                 <th>Tanggal</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>John Doe</td>
-                <td>Nasi Goreng</td>
-                <td>Rp 25.000</td>
-                <td>2023-10-01</td>
-            </tr>
-            <tr>
-                <td>Jane Smith</td>
-                <td>Ayam Penyet</td>
-                <td>Rp 30.000</td>
-                <td>2023-10-02</td>
-            </tr>
-            <tr>
-                <td>Ali Ahmad</td>
-                <td>Bakso</td>
-                <td>Rp 20.000</td>
-                <td>2023-10-03</td>
-            </tr>
+            <?php if (!empty($pengeluaran)): ?>
+                <?php foreach ($pengeluaran as $row): ?>
+                    <tr>
+                        <td><?= esc($row['nama_barang']) ?></td>
+                        <td><?= esc($row['jumlah']) ?></td>
+                        <td>Rp <?= number_format($row['harga'], 0, ',', '.') ?></td>
+                        <td><?= esc($row['tanggal']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="4" class="text-center">Belum ada data</td>
+                </tr>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>
-
-
-
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Nama Barang</p>
-                <input class="form-control form-control-sm" type="text" placeholder="contoh: beras" aria-label=".form-control-sm example">
-                <p>Jumlah Barang </p>
-                <input class="form-control form-control-sm" type="number" placeholder="" aria-label=".form-control-sm example ">
-                <p>Harga </p>
-                <input class="form-control form-control-sm" type="number" placeholder="" aria-label=".form-control-sm example">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">simpan</button>
-            </div>
+            <form action="<?= base_url('pengeluaran/simpan') ?>" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tambah Pengeluaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Nama Barang</p>
+                    <input name="nama_barang" class="form-control form-control-sm" type="text" placeholder="contoh: beras" required>
+
+                    <p>Jumlah Barang</p>
+                    <input name="jumlah" class="form-control form-control-sm" type="text" required>
+
+                    <p>Harga</p>
+                    <input name="harga" class="form-control form-control-sm" type="number" required>
+
+                    <p>Tanggal</p>
+                    <input name="tanggal" class="form-control form-control-sm" type="date" value="<?= date('Y-m-d') ?>" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

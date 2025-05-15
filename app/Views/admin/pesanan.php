@@ -1,60 +1,43 @@
 <?= $this->extend('admin/template/template'); ?>
-
 <?= $this->section('content'); ?>
 
-<h1>Daftar Pesanan</h1>
+<div class="container">
+    <h1 class="my-4">Daftar Pesanan</h1>
 
-<p>tanggal :</p>
+    <p><strong>Tanggal:</strong> <?= date('d-m-Y') ?></p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Meja</th>
-            <th scope="col">Nama</th>
-            <th scope="col">pesanan</th>
-            <th scope="col">deskripsi</th>
-            <th scope="col">Total</th>
-            <th scope="col">aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>1</td>
-            <td>John Doe</td>
-            <td>Pizza</td>
-            <td>Large pizza with extra cheese</td>
-            <td>Rp 500.000</td>
-            <td>
-                <button class="btn btn-primary">Cetak Pesanan</button>
-                <button class="btn btn-danger">Cetak Nota</button>
-                <button class="btn btn-danger" onclick="return confirm('apakah anda yakin pesanan selesai?');">Selesai</button>
-            </td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Jane Smith</td>
-            <td>Pasta</td>
-            <td>Spaghetti with marinara sauce</td>
-            <td>Rp 750.000</td>
-            <td>
-                <button class="btn btn-primary">Cetak Pesanan</button>
-                <button class="btn btn-danger">Cetak Nota</button>
-                <button class="btn btn-danger" onclick="return confirm('apakah anda yakin pesanan selesai?');">Selesai</button>
-            </td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Michael Johnson</td>
-            <td>Burger</td>
-            <td>Cheeseburger with fries</td>
-            <td>Rp 1.000.000</td>
-            <td>
-                <button class="btn btn-primary">Cetak Pesanan</button>
-                <button class="btn btn-danger">Cetak Nota</button>
-                <button class="btn btn-danger" onclick="return confirm('apakah anda yakin pesanan selesai?');">Selesai</button>
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>No Meja</th>
+                <th>Nama Pemesan</th>
+                <th>Menu</th>
+                <th>Total Bayar</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (!empty($orders)): ?>
+                <?php foreach ($orders as $order): ?>
+                    <tr>
+                        <td><?= esc($order['meja_id']) ?></td>
+                        <td><?= esc($order['customer_name']) ?></td>
+                        <td><?= esc($order['menu']) ?></td>
+                        <td>Rp <?= number_format($order['total'], 0, ',', '.') ?></td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-primary">Cetak Pesanan</a>
+                            <a href="#" class="btn btn-sm btn-success">Cetak Nota</a>
+                            <a href="#" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin pesanan selesai?');">Selesai</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="5" class="text-center">Tidak ada pesanan</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 
-<?= $this->endSection('content'); ?>
+<?= $this->endSection(); ?>

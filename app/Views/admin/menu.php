@@ -54,7 +54,7 @@
 <!-- Modal tambah menu -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="/menu/save" method="post" enctype="multipart/form-data" class="modal-content">
+        <form action="/menu/save/" method="post" enctype="multipart/form-data" class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Tambah Menu</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -104,7 +104,7 @@
 <!-- Modal Edit -->
 <div class="modal fade" id="editModal<?= $m['id'] ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $m['id'] ?>" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="<?= site_url('menu/update/' . $m['id']) ?>" method="post">
+        <form action="<?= site_url('menu/edit/' . $m['id']) ?>" method="post">
             <?= csrf_field() ?>
             <div class="modal-content">
                 <div class="modal-header">
@@ -117,8 +117,13 @@
                         <input type="text" class="form-control" id="name<?= $m['id'] ?>" name="name" value="<?= esc($m['name']) ?>" required>
                     </div>
                     <div class="mb-3">
-                        <label for="category<?= $m['id'] ?>" class="form-label">Kategori</label>
-                        <input type="text" class="form-control" id="category<?= $m['id'] ?>" name="category_id" value="<?= esc($m['category_id']) ?>" required>
+                        <label for="kategori" class="form-label">Kategori</label>
+                        <select class="form-select" id="kategori" name="category_id" required>
+                            <option value="">-- Pilih Kategori --</option>
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?= $cat['id'] ?>"><?= esc($cat['name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="description<?= $m['id'] ?>" class="form-label">Deskripsi</label>

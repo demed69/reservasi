@@ -78,6 +78,8 @@ class Admin extends BaseController
 
         return view('admin/meja', $data);
     }
+
+
     public function simpan()
     {
         $mejaModel = new \App\Models\MejaModel();
@@ -141,28 +143,35 @@ class Admin extends BaseController
         return view('admin/menu', $data);
     }
 
-    public function saveMenu()
+    public function save()
     {
-        $menuModel = new MenusModel();
-
-        $gambar = $this->request->getFile('photo');
-
-        if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
-            $namaGambar = $gambar->getRandomName();
-            $gambar->move('uploads/menu', $namaGambar);
-        } else {
-            $namaGambar = null; // atau bisa beri default image
-        }
-
-        $menuModel->save([
-            'name'         => $this->request->getPost('name'),
-            'category_id'  => $this->request->getPost('category_id'),
-            'description'  => $this->request->getPost('description'),
-            'price'        => $this->request->getPost('price'),
-            'photo'        => $namaGambar
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'name'        => 'required',
+            'category_id' => 'required|integer',
+            'description' => 'required',
+            'price'       => 'required|numeric',
+            'photo'       => 'uploaded[photo]|is_image[photo]|mime_in[photo,image/jpg,image/jpeg,image/png]'
         ]);
 
-        return redirect()->to('/menu')->with('success', 'Menu berhasil ditambahkan');
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+        }
+
+        $file = $this->request->getFile('photo');
+        $newName = $file->getRandomName();
+        $file->move('uploads/menu/', $newName);
+
+        $menuModel = new MenusModel();
+        $menuModel->save([
+            'name'        => $this->request->getPost('name'),
+            'category_id' => $this->request->getPost('category_id'),
+            'description' => $this->request->getPost('description'),
+            'price'       => $this->request->getPost('price'),
+            'photo'       => $newName
+        ]);
+
+        return redirect()->to('/menu')->with('success', 'Menu berhasil ditambahkan.');
     }
 
     public function delete($id)
@@ -181,21 +190,56 @@ class Admin extends BaseController
 
     public function edit($id)
     {
-        $model = new MenusModel();
-        $data['menu'] = $model->find($id);
+        $menuModel = new \App\Models\MenusModel();
 
-        if (!$data['menu']) {
-            return redirect()->to('/admin/menu')->with('error', 'Data tidak ditemukan.');
+        // Validasi input
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'name'        => 'required',
+            'category_id' => 'required|integer',
+            'description' => 'required',
+            'price'       => 'required|numeric',
+            'photo'       => 'if_exist|uploaded[photo]|is_image[photo]|mime_in[photo,image/jpg,image/jpeg,image/png]'
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
         }
 
-        return view('admin/edit_menu', $data);
+        // Ambil data dari form
+        $data = [
+            'name'        => $this->request->getPost('name'),
+            'category_id' => $this->request->getPost('category_id'),
+            'description' => $this->request->getPost('description'),
+            'price'       => $this->request->getPost('price')
+        ];
+
+        // Cek apakah ada file photo baru diupload
+        $file = $this->request->getFile('photo');
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            // Generate nama file acak dan simpan
+            $newName = $file->getRandomName();
+            $file->move('uploads/menu/', $newName);
+
+            // Simpan nama file ke data yang akan diupdate
+            $data['photo'] = $newName;
+
+            // (Opsional) Hapus gambar lama
+            $oldMenu = $menuModel->find($id);
+            if ($oldMenu && !empty($oldMenu['photo']) && file_exists('uploads/menu/' . $oldMenu['photo'])) {
+                unlink('uploads/menu/' . $oldMenu['photo']);
+            }
+        }
+
+        // Update ke database
+        $menuModel->update($id, $data);
+
+        return redirect()->to('/menu')->with('success', 'Menu berhasil diperbarui.');
     }
 
 
+
     //controler menu end
-
-
-
 
     public function pesanan()
     {
@@ -258,6 +302,7 @@ class Admin extends BaseController
     }
 
     //pengeluaran end
+    //kariawan
 
     public function kariawan()
     {
@@ -269,5 +314,76 @@ class Admin extends BaseController
         ];
 
         return view('admin/kariawan', $data);
+    }
+
+    public function editKaryawan($id)
+    {
+        $userModel = new \App\Models\UserModel();
+
+        // Ambil data user yang akan diedit
+        $existingUser = $userModel->find($id);
+
+        if (!$existingUser) {
+            return redirect()->to('/karyawan')->with('error', 'Karyawan tidak ditemukan.');
+        }
+
+        // Validasi input
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'name'  => 'required|min_length[3]',
+            'email' => 'required|valid_email',
+            'no_hp' => 'required|min_length[10]',
+            'role'  => 'required'
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+        }
+
+        // Ambil data dari form
+        $data = [
+            'name'  => $this->request->getPost('name'),
+            'email' => $this->request->getPost('email'),
+            'no_hp' => $this->request->getPost('no_hp'),
+            'role'  => $this->request->getPost('role'),
+        ];
+
+        // Update ke database
+        if ($userModel->update($id, $data)) {
+            return redirect()->to('/karyawan')->with('success', 'Data karyawan berhasil diperbarui.');
+        } else {
+            return redirect()->back()->with('error', 'Gagal memperbarui data karyawan.');
+        }
+    }
+
+
+    public function deleteKaryawan($id)
+    {
+        $userModel = new \App\Models\UserModel();
+
+        // Cek apakah user dengan ID tersebut ada
+        $user = $userModel->find($id);
+
+        if (!$user) {
+            return redirect()->to('/kariawan')->with('error', 'Karyawan tidak ditemukan.');
+        }
+
+        // Hapus user dari database
+        $userModel->delete($id);
+
+        return redirect()->to('/kariawan')->with('success', 'Karyawan berhasil dihapus.');
+    }
+    //kariawan end
+    // profile
+    public function profile()
+    {
+
+        $data = [
+            'title' => 'Karyawan | Cafe Shop',
+        ];
+
+
+
+        return view('admin/profile', $data);
     }
 }

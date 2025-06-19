@@ -29,7 +29,7 @@
 
     <div class="card shadow p-4" style="width: 400px;">
         <h4 class="text-center">Daftar Akun</h4>
-        <form action="register_process.php" method="POST" onsubmit="return validatePassword()">
+        <form action="<?= base_url('daftar/process') ?>" method="POST" onsubmit="return validatePassword()">
             <div class="mb-3">
                 <label for="name" class="form-label">Nama Lengkap</label>
                 <input type="text" class="form-control" id="name" name="name" required placeholder="Masukkan nama">

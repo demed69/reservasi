@@ -167,11 +167,11 @@
                     <span>Admin</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                    <li><a class="dropdown-item" href="/admin/profile">My Profile</a></li>
+                    <li><a class="dropdown-item" href="/profile">My Profile</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <li><a class="dropdown-item" href="#">Logout</a></li>
+                    <li><a class="dropdown-item" href="/logout">Logout</a></li>
                 </ul>
             </div>
         </div>

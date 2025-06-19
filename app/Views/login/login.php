@@ -13,7 +13,7 @@
 
     <div class="card shadow p-4" style="width: 350px;">
         <h4 class="text-center">Login</h4>
-        <form action="login_process.php" method="POST">
+        <form action="<?= base_url('login/process') ?>" method="POST">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" required placeholder="Masukkan email">

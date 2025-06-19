@@ -33,7 +33,7 @@
                 <!-- Modal Edit -->
                 <div class="modal fade" id="editModal<?= $user['id'] ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $user['id'] ?>" aria-hidden="true">
                     <div class="modal-dialog">
-                        <form action="<?= base_url('admin/karyawan/update/' . $user['id']) ?>" method="post">
+                        <form action="<?= base_url('/kariawan/editkaryawan/' . $user['id']) ?>" method="post">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="editModalLabel<?= $user['id'] ?>">Edit Karyawan</h5>
@@ -42,6 +42,15 @@
                                 <div class="modal-body">
                                     <p>Nama</p>
                                     <input class="form-control form-control-sm" type="text" name="name" value="<?= esc($user['name']) ?>" required>
+
+                                    <div class="mb-3">
+                                        <label for="role" class="form-label">Role</label>
+                                        <select class="form-select" id="role" name="role" required>
+                                            <option value="">-- Pilih Role --</option>
+                                            <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
+                                            <option value="super_admin" <?= $user['role'] === 'super_admin' ? 'selected' : '' ?>>Super Admin</option>
+                                        </select>
+                                    </div>
 
                                     <p>Email</p>
                                     <input class="form-control form-control-sm" type="email" name="email" value="<?= esc($user['email']) ?>" required>
@@ -61,7 +70,7 @@
                 <!-- Modal Hapus -->
                 <div class="modal fade" id="hapusModal<?= $user['id'] ?>" tabindex="-1" aria-labelledby="hapusModalLabel<?= $user['id'] ?>" aria-hidden="true">
                     <div class="modal-dialog">
-                        <form action="<?= base_url('admin/karyawan/delete/' . $user['id']) ?>" method="post">
+                        <form action="<?= base_url('karyawan/delete' . $user['id']) ?>" method="post">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="hapusModalLabel<?= $user['id'] ?>">Konfirmasi Hapus</h5>
